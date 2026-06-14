@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Загрузка HTML</title>
+	<link rel="stylesheet" th:href="@{/css/admin.css}">
+</head>
+<body>
+<header>
+	<strong>HTML-файлы</strong>
+	<form method="post" th:action="@{/logout}">
+		<button class="secondary" type="submit">Выйти</button>
+	</form>
+</header>
+<main>
+	<section>
+		<h1>Загрузка HTML</h1>
+		<p class="muted">Папка назначения: <code th:text="${uploadDirectory}"></code></p>
+		<div class="message success" th:if="${success}" th:text="${success}"></div>
+		<div class="message error" th:if="${error}" th:text="${error}"></div>
+		<form class="upload-form" method="post" enctype="multipart/form-data" th:action="@{/admin/upload}">
+			<label for="file">HTML-файл</label>
+			<input id="file" name="file" type="file" accept=".html,text/html" required>
+			<button type="submit">Загрузить</button>
+		</form>
+	</section>
+	<section>
+		<h2>Загруженные файлы</h2>
+		<p class="muted" th:if="${#lists.isEmpty(files)}">Пока нет загруженных HTML-файлов.</p>
+		<ul th:unless="${#lists.isEmpty(files)}">
+			<li th:each="file : ${files}" th:text="${file}"></li>
+		</ul>
+	</section>
+</main>
+</body>
+</html>
