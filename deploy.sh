@@ -14,13 +14,13 @@ if [[ "${EUID}" -ne 0 ]]; then
 fi
 
 if ! command -v java >/dev/null 2>&1; then
-	echo "Java 21 is required."
+	echo "Java 25 is required."
 	exit 1
 fi
 
 JAVA_MAJOR="$(java -version 2>&1 | awk -F '[".]' '/version/ { print $2; exit }')"
-if [[ "${JAVA_MAJOR}" -lt 21 ]]; then
-	echo "Java 21 or newer is required. Found Java ${JAVA_MAJOR}."
+if [[ "${JAVA_MAJOR}" -lt 25 ]]; then
+	echo "Java 25 or newer is required. Found Java ${JAVA_MAJOR}."
 	exit 1
 fi
 
