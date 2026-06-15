@@ -57,7 +57,35 @@ public class HtmlStorageService {
 		}
 	}
 
+	public Path getFile(String fileName) {
+		Path file = resolveHtmlFile(fileName);
+		if (!Files.isRegularFile(file)) {
+			throw new IllegalArgumentException("Файл «" + fileName + "» не найден.");
+		}
+		return file;
+	}
+
+	public void delete(String fileName) throws IOException {
+		Path file = resolveHtmlFile(fileName);
+		if (!Files.deleteIfExists(file)) {
+			throw new IllegalArgumentException("Файл «" + fileName + "» не найден.");
+		}
+	}
+
 	public Path getUploadDirectory() {
 		return uploadDirectory;
+	}
+
+	private Path resolveHtmlFile(String fileName) {
+		if (fileName == null || fileName.isBlank() || fileName.contains("/") || fileName.contains("\\")
+				|| !fileName.toLowerCase(Locale.ROOT).endsWith(".html")) {
+			throw new IllegalArgumentException("Недопустимое имя файла.");
+		}
+
+		Path file = uploadDirectory.resolve(fileName).normalize();
+		if (!file.getParent().equals(uploadDirectory)) {
+			throw new IllegalArgumentException("Недопустимый путь файла.");
+		}
+		return file;
 	}
 }

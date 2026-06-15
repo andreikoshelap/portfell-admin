@@ -82,5 +82,34 @@ button:hover { background: #145a32; }
 
 .success { color: #145a32; background: #e9f7ef; border-color: #229954; }
 .error { color: #922b21; background: #fdedec; border-color: #c0392b; }
-ul { padding-left: 20px; }
-li { padding: 4px 0; }
+
+.file-list {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.file-list li {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 12px;
+	padding: 7px 0;
+	border-bottom: 1px solid #e5e7e9;
+}
+
+.file-list li:last-child { border-bottom: 0; }
+.file-list form { display: block; }
+
+.delete-file {
+	padding: 0;
+	width: 28px;
+	height: 28px;
+	border-color: transparent;
+	color: #922b21;
+	background: transparent;
+	font-size: 22px;
+	line-height: 1;
+}
+
+.delete-file:hover { background: #fdedec; }

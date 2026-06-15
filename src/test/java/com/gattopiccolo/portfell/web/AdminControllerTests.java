@@ -19,6 +19,8 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -58,5 +60,29 @@ class AdminControllerTests {
 				.andExpect(status().is3xxRedirection());
 
 		assertThat(Files.readString(uploadDirectory.resolve("published.html"))).isEqualTo("<p>Published</p>");
+	}
+
+	@Test
+	void authenticatedAdminCanOpenHtml() throws Exception {
+		Files.writeString(uploadDirectory.resolve("published.html"), "<p>Published</p>");
+
+		mockMvc.perform(get("/admin/files/published.html")
+						.with(user("admin").roles("ADMIN")))
+				.andExpect(status().isOk())
+				.andExpect(content().contentTypeCompatibleWith("text/html"))
+				.andExpect(content().string("<p>Published</p>"));
+	}
+
+	@Test
+	void authenticatedAdminCanDeleteHtml() throws Exception {
+		Files.writeString(uploadDirectory.resolve("published.html"), "<p>Published</p>");
+
+		mockMvc.perform(post("/admin/files/published.html/delete")
+						.with(user("admin").roles("ADMIN"))
+						.with(csrf()))
+				.andExpect(status().is3xxRedirection())
+				.andExpect(redirectedUrl("/admin"));
+
+		assertThat(uploadDirectory.resolve("published.html")).doesNotExist();
 	}
 }

@@ -1,9 +1,13 @@
 package com.gattopiccolo.portfell.web;
 
 import com.gattopiccolo.portfell.storage.HtmlStorageService;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
@@ -42,6 +46,25 @@ public class AdminController {
 		try {
 			String fileName = storageService.store(file);
 			redirectAttributes.addFlashAttribute("success", "Файл «" + fileName + "» загружен.");
+		} catch (IllegalArgumentException | IOException exception) {
+			redirectAttributes.addFlashAttribute("error", exception.getMessage());
+		}
+		return "redirect:/admin";
+	}
+
+	@GetMapping("/admin/files/{fileName}")
+	public ResponseEntity<FileSystemResource> open(@PathVariable String fileName) {
+		var resource = new FileSystemResource(storageService.getFile(fileName));
+		return ResponseEntity.ok()
+				.contentType(MediaType.TEXT_HTML)
+				.body(resource);
+	}
+
+	@PostMapping("/admin/files/{fileName}/delete")
+	public String delete(@PathVariable String fileName, RedirectAttributes redirectAttributes) {
+		try {
+			storageService.delete(fileName);
+			redirectAttributes.addFlashAttribute("success", "Файл «" + fileName + "» удалён.");
 		} catch (IllegalArgumentException | IOException exception) {
 			redirectAttributes.addFlashAttribute("error", exception.getMessage());
 		}

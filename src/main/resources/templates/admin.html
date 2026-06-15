@@ -28,8 +28,14 @@
 	<section>
 		<h2>Загруженные файлы</h2>
 		<p class="muted" th:if="${#lists.isEmpty(files)}">Пока нет загруженных HTML-файлов.</p>
-		<ul th:unless="${#lists.isEmpty(files)}">
-			<li th:each="file : ${files}" th:text="${file}"></li>
+		<ul class="file-list" th:unless="${#lists.isEmpty(files)}">
+			<li th:each="file : ${files}">
+				<a th:href="@{/admin/files/{fileName}(fileName=${file})}" th:text="${file}" target="_blank"></a>
+				<form method="post" th:action="@{/admin/files/{fileName}/delete(fileName=${file})}"
+					  onsubmit="return confirm('Удалить этот файл?')">
+					<button class="delete-file" type="submit" th:attr="aria-label=|Удалить ${file}|" title="Удалить">×</button>
+				</form>
+			</li>
 		</ul>
 	</section>
 </main>

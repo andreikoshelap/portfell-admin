@@ -42,4 +42,21 @@ class HtmlStorageServiceTests {
 		assertThatIllegalArgumentException().isThrownBy(() -> service.store(file));
 		assertThat(uploadDirectory.getParent().resolve("outside.html")).doesNotExist();
 	}
+
+	@Test
+	void deletesHtmlFile() throws Exception {
+		var service = new HtmlStorageService(new UploadProperties(uploadDirectory));
+		Files.writeString(uploadDirectory.resolve("page.html"), "<h1>Hello</h1>");
+
+		service.delete("page.html");
+
+		assertThat(uploadDirectory.resolve("page.html")).doesNotExist();
+	}
+
+	@Test
+	void rejectsDeletingPathTraversal() throws Exception {
+		var service = new HtmlStorageService(new UploadProperties(uploadDirectory));
+
+		assertThatIllegalArgumentException().isThrownBy(() -> service.delete("../outside.html"));
+	}
 }
